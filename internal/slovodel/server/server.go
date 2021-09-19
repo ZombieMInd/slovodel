@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/ZombieMInd/slovodel/internal/slovodel/game"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
@@ -17,8 +18,22 @@ const (
 )
 
 type server struct {
-	router *mux.Router
-	logger *logrus.Logger
+	router   *mux.Router
+	logger   *logrus.Logger
+	services Services
+}
+
+type GameService interface {
+	Create(*game.Game) error
+	Update(*game.Game) error
+	Get(int64) (*game.Game, error)
+	GetByName(string) (*game.Game, error)
+	Delete(string) error
+	GetAll() ([]*game.Game, error)
+}
+
+type Services struct {
+	GameService GameService
 }
 
 func NewServer() *server {
@@ -80,4 +95,17 @@ func (s *server) respond(w http.ResponseWriter, r *http.Request, code int, data 
 	if data != nil {
 		json.NewEncoder(w).Encode(data)
 	}
+}
+
+func (s *server) configLogger(conf *Config) {
+	formatter := &logrus.TextFormatter{
+		FullTimestamp: true,
+	}
+	s.logger.SetFormatter(formatter)
+}
+
+func (s *server) InitServices(config *Config) error {
+	gameRepository := game.NewMockGameRepository()
+	s.services.GameService = game.NewGameService(gameRepository)
+	return nil
 }
