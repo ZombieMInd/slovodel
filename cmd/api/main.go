@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ZombieMInd/slovodel/internal/slovodel/config"
 	"github.com/ZombieMInd/slovodel/internal/slovodel/server"
 	"github.com/joho/godotenv"
 )
@@ -15,9 +14,10 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	app := &config.App{}
+	conf := &server.Config{}
 
-	server.InitConfig(app)
+	server.InitConfig(conf)
 
-	fmt.Printf("Starting %s", app.Name)
+	fmt.Printf("Starting %s", conf.Name)
+	server.Start(conf)
 }
