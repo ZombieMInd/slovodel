@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ZombieMInd/slovodel/internal/slovodel/server"
+	"github.com/ZombieMInd/slovodel/internal/server"
 	"github.com/joho/godotenv"
 )
 
@@ -18,6 +18,6 @@ func main() {
 
 	server.InitConfig(conf)
 
-	fmt.Printf("Starting %s", conf.Name)
+	fmt.Printf("Starting %s on %s \n", conf.Name, conf.BindAddr)
 	server.Start(conf)
 }
