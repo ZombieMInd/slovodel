@@ -8,9 +8,7 @@ import (
 	"net/http"
 
 	"github.com/ZombieMInd/slovodel/internal/store"
-	"github.com/ZombieMInd/slovodel/internal/store/redisstore"
 	"github.com/ZombieMInd/slovodel/internal/store/sqlstore"
-	"github.com/go-redis/redis"
 	"github.com/gorilla/handlers"
 	"github.com/kelseyhightower/envconfig"
 	_ "github.com/lib/pq"
@@ -64,19 +62,6 @@ func initStore(conf *Config) (store.Store, error) {
 			return nil, err
 		}
 		return sqlstore.New(db), nil
-	} else if conf.StoreMode == "redis" {
-		client := redis.NewClient(&redis.Options{
-			Addr:     conf.Redis.Host,
-			Password: conf.Redis.Password,
-			DB:       conf.Redis.DB,
-		})
-
-		_, err := client.Ping().Result()
-		if err != nil {
-			return nil, err
-		}
-
-		return redisstore.New(client), nil
 	}
 	return nil, errors.New("unknown store mode")
 }

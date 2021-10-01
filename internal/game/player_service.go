@@ -2,7 +2,7 @@ package game
 
 type PlayerRepository interface {
 	Create(*Player) (int, error)
-	GetAll() ([]*Player, error)
+	GetAll(offset, limit int) ([]*Player, error)
 	Get(int) (*Player, error)
 	Update(*Player) error
 	Delete(*Player) error
@@ -20,8 +20,8 @@ func (s *PlayerService) Create(name string) (int, error) {
 	return s.repository.Create(&Player{Name: name})
 }
 
-func (s *PlayerService) ListAll() ([]*Player, error) {
-	return s.repository.GetAll()
+func (s *PlayerService) ListAll(offset, limit int) ([]*Player, error) {
+	return s.repository.GetAll(offset, limit)
 }
 
 func (s *PlayerService) Get(id int) (*Player, error) {

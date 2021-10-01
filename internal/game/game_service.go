@@ -4,8 +4,10 @@ type GameRepository interface {
 	Create(*Game) (int, error)
 	Get(int) (*Game, error)
 	Update(*Game) error
-	GetAll() ([]*Game, error)
+	GetAll(offset, limit int) ([]*Game, error)
 	Delete(*Game) error
+	AddWord(*Game, *Word) error
+	AddPlayer(*Game, *Player) error
 }
 
 type GameService struct {
@@ -25,21 +27,23 @@ func (s *GameService) CreateWithPlayers(g *Game) (id int, err error) {
 }
 
 func (s *GameService) AddPlayer(gameID int, player *Player) error {
-	g, err := s.repository.Get(gameID)
-	if err != nil {
-		return err
-	}
-	g.Players = append(g.Players, player)
-
-	err = s.repository.Update(g)
+	err := s.repository.AddPlayer(&Game{ID: gameID}, player)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *GameService) ListAll() ([]*Game, error) {
-	return s.repository.GetAll()
+func (s *GameService) AddWord(gameID int, word *Word) error {
+	err := s.repository.AddWord(&Game{ID: gameID}, word)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *GameService) ListAll(offset, limit int) ([]*Game, error) {
+	return s.repository.GetAll(offset, limit)
 }
 
 func (s *GameService) Get(id int) (*Game, error) {
